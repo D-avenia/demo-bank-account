@@ -6,15 +6,9 @@ import com.example.innotek.demobankchallenge.model.banktransfer.BankTransferResu
 import com.example.innotek.demobankchallenge.model.banktransfer.ServerResponseBankTransferResult;
 import com.example.innotek.demobankchallenge.model.transaction.ServerResponseTransactions;
 import com.example.innotek.demobankchallenge.model.transaction.TransactionPayload;
-import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.CDI,
-		uses = BankAccountMapper.class,
-		injectionStrategy = InjectionStrategy.CONSTRUCTOR)
-@Component
+@Mapper(componentModel = "spring")
 public interface BankAccountMapper {
 
 	ServerResponseBalance toResponseBalance(Balance sourceResponse);

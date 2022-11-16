@@ -31,32 +31,29 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public Balance getBalance(int accountId) {
 
-        Balance response = webClient
+        return webClient
                 .get()
                 .uri("accounts/{accountId}/balance", accountId)
                 .retrieve()
                 .bodyToMono(Balance.class).block();
-        return response;
     }
 
     @Override //Questo forse non funzionerà
     public BankTransferResult moneyTransfers(int accountId, String timeZone, BankTransfer moneyTransfer) {
-        BankTransferResult response = webClient
+        return webClient
                 .get()
                 .uri("accounts/{accountId}/payments/money-transfers", accountId)
                 .retrieve()
                 .bodyToMono(BankTransferResult.class).block();
-        return response;
     }
 
     @Override
     public TransactionPayload getTransactions(int accountId, LocalDate from, LocalDate to) {
-        TransactionPayload response = webClient
+        return webClient
                 .get()
                 .uri("accounts/{accountId}/transactions", accountId)
                 .retrieve()
                 .bodyToMono(TransactionPayload.class).block();
-        return response;
     }
 
     @Override
