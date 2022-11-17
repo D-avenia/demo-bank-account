@@ -8,6 +8,7 @@ import com.example.innotek.demobankchallenge.model.transaction.TransactionPayloa
 import com.example.innotek.demobankchallenge.service.BankAccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
@@ -32,22 +33,22 @@ public class BankAccountServiceImpl implements BankAccountService {
                 .bodyToMono(Balance.class);
     }
 
-    @Override //Questo forse non funzionerà
-    public BankTransferResult moneyTransfers(int accountId, String timeZone, BankTransfer moneyTransfer) {
+    @Override
+    public Mono<BankTransferResult> moneyTransfers(int accountId, String timeZone, BankTransfer moneyTransfer) {
         return webClient
                 .get()
                 .uri("accounts/{accountId}/payments/money-transfers", accountId)
                 .retrieve()
-                .bodyToMono(BankTransferResult.class).block();
+                .bodyToMono(BankTransferResult.class);
     }
 
     @Override
-    public TransactionPayload getTransactions(int accountId, LocalDate from, LocalDate to) {
+    public Flux<TransactionPayload> getTransactions(int accountId, LocalDate from, LocalDate to) {
         return webClient
                 .get()
                 .uri("accounts/{accountId}/transactions", accountId)
                 .retrieve()
-                .bodyToMono(TransactionPayload.class).block();
+                .bodyToFlux(TransactionPayload.class);
     }
 
     @Override

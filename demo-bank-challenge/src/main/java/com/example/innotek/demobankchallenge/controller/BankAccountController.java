@@ -4,8 +4,6 @@ import com.example.innotek.demobankchallenge.mapper.BankAccountMapper;
 import com.example.innotek.demobankchallenge.model.balance.Balance;
 import com.example.innotek.demobankchallenge.model.banktransfer.BankTransfer;
 import com.example.innotek.demobankchallenge.model.banktransfer.BankTransferResult;
-import com.example.innotek.demobankchallenge.model.banktransfer.ServerResponseBankTransferResult;
-import com.example.innotek.demobankchallenge.model.transaction.ServerResponseTransactions;
 import com.example.innotek.demobankchallenge.model.transaction.TransactionPayload;
 import com.example.innotek.demobankchallenge.service.BankAccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
@@ -56,18 +55,18 @@ public class BankAccountController {
                     @Content(mediaType = APPLICATION_JSON_VALUE)})
     })
 
-    public ResponseEntity<ServerResponseTransactions> getTransactions(
+    public ResponseEntity<Flux<TransactionPayload>> getTransactions(
             @PathVariable int accountId,
             @PathVariable LocalDate from,
             @PathVariable LocalDate to) {
-        TransactionPayload resultService = service.getTransactions(accountId, from, to);
+        Flux<TransactionPayload> resultService = service.getTransactions(accountId, from, to);
 
-        service.persistTransactions(accountId,resultService.getList());
+        //service.persistTransactions(accountId,resultService.);
 
-        ServerResponseTransactions result = mapper.toResponseTransactions(resultService);
+        //ServerResponseTransactions result = mapper.toResponseTransactions(resultService);
         return ResponseEntity
                 .ok()
-                .body(result);
+                .body(resultService);
     }
 
     @PostMapping("/moneyTransfer")
@@ -77,7 +76,7 @@ public class BankAccountController {
                     @Content(mediaType = APPLICATION_JSON_VALUE)})
     })
 
-    public ResponseEntity<ServerResponseBankTransferResult> moneyTransfer(
+    public ResponseEntity<Mono<BankTransferResult>> moneyTransfer(
             @Parameter(description = "The id of the account", example = "1234")
             @PathVariable final int accountId,
             @Parameter(description = "The time zone used to provide the request date fields", example = "Europe/Rome")
@@ -85,12 +84,12 @@ public class BankAccountController {
             @Parameter(description = "The data to make a money transfer", required = true, schema = @Schema(implementation = BankTransfer.class))
             @RequestBody BankTransfer moneyTransfer
     ) {
-        BankTransferResult resultService  =  service.moneyTransfers(accountId,timeZone, moneyTransfer);
+        Mono<BankTransferResult> resultService  =  service.moneyTransfers(accountId,timeZone, moneyTransfer);
 
-        ServerResponseBankTransferResult result = mapper.toResponseBankTransfer(resultService);
+        //ServerResponseBankTransferResult result = mapper.toResponseBankTransfer(resultService);
         return ResponseEntity
                 .ok()
-                .body(result);
+                .body(resultService);
 
     }
 }
