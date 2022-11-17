@@ -5,12 +5,13 @@ import com.example.innotek.demobankchallenge.model.banktransfer.BankTransfer;
 import com.example.innotek.demobankchallenge.model.banktransfer.BankTransferResult;
 import com.example.innotek.demobankchallenge.model.transaction.Transaction;
 import com.example.innotek.demobankchallenge.model.transaction.TransactionPayload;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface BankAccountService {
-    Balance getBalance(int accountId);
+    Mono<Balance> getBalance(int accountId);
 
     BankTransferResult moneyTransfers(int accountId, String timeZone, BankTransfer moneyTransfer);
 

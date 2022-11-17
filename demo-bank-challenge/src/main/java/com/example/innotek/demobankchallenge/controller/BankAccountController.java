@@ -2,7 +2,6 @@ package com.example.innotek.demobankchallenge.controller;
 
 import com.example.innotek.demobankchallenge.mapper.BankAccountMapper;
 import com.example.innotek.demobankchallenge.model.balance.Balance;
-import com.example.innotek.demobankchallenge.model.balance.ServerResponseBalance;
 import com.example.innotek.demobankchallenge.model.banktransfer.BankTransfer;
 import com.example.innotek.demobankchallenge.model.banktransfer.BankTransferResult;
 import com.example.innotek.demobankchallenge.model.banktransfer.ServerResponseBankTransferResult;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 
@@ -39,14 +39,14 @@ public class BankAccountController {
             @ApiResponse(responseCode = "200", description = "The actual balance for the account is retrieved", content = {
                     @Content(mediaType = APPLICATION_JSON_VALUE)})
     })
-    public ResponseEntity<ServerResponseBalance> getBalance(@PathVariable final int accountId) {
-        Balance resultBalance = service.getBalance(accountId);
+    public ResponseEntity<Mono<Balance>> getBalance(@PathVariable final int accountId) {
+        Mono<Balance> resultBalance = service.getBalance(accountId);
 
-        ServerResponseBalance result = mapper.toResponseBalance(resultBalance);
+        //ServerResponseBalance result = mapper.toResponseBalance(resultBalance);
 
         return ResponseEntity
                 .ok()
-                .body(result);
+                .body(resultBalance);
     }
 
     @GetMapping("/getTransactions")

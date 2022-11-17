@@ -8,6 +8,7 @@ import com.example.innotek.demobankchallenge.model.transaction.TransactionPayloa
 import com.example.innotek.demobankchallenge.service.BankAccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,13 +23,13 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public Balance getBalance(int accountId) {
+    public Mono<Balance> getBalance(int accountId) {
 
         return webClient
                 .get()
                 .uri("accounts/{accountId}/balance", accountId)
                 .retrieve()
-                .bodyToMono(Balance.class).block();
+                .bodyToMono(Balance.class);
     }
 
     @Override //Questo forse non funzionerà
