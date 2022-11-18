@@ -7,9 +7,13 @@ import com.example.innotek.demobankchallenge.model.transaction.ServerResponseTra
 import com.example.innotek.demobankchallenge.service.BankAccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriTemplate;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.time.LocalDate;
+import java.util.function.Function;
 
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
@@ -33,7 +37,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public Mono<ServerResponseBankTransferResult> moneyTransfers(int accountId, String timeZone, BankTransfer moneyTransfer) {
         return webClient
-                .get()
+                .post()
                 .uri("accounts/{accountId}/payments/money-transfers", accountId)
                 .header("X-Time-Zone", timeZone)
                 .retrieve()
@@ -42,9 +46,21 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public Mono<ServerResponseTransactions> getTransactions(int accountId, LocalDate from, LocalDate to) {
+        Function<UriBuilder, URI> uriFunction = (uriBuilder) -> {
+
+            UriTemplate uriTemplate =   new UriTemplate("accounts/{accountId}/transactions");
+            URI uri	= uriTemplate.expand(accountId);
+            String uriPath = uri.getPath();
+            return uriBuilder
+                    .path(uriPath)
+                    .queryParam("fromAccountingDate", from)
+                    .queryParam("toAccountingDate", to)
+                    .build();
+        };
+
         return webClient
                 .get()
-                .uri("accounts/{accountId}/transactions", accountId)
+                .uri(uriFunction)
                 .retrieve()
                 .bodyToMono(ServerResponseTransactions.class);
     }

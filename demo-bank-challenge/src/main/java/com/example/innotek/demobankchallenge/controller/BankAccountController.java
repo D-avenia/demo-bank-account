@@ -57,8 +57,8 @@ public class BankAccountController {
 
     public ResponseEntity<ServerResponseTransactions> getTransactions(
             @PathVariable int accountId,
-            @RequestParam("from") final String from,
-            @RequestParam("to") final String to
+            @RequestParam("from") String from,
+            @RequestParam("to") String to
     ) {
         LocalDate fromDate = LocalDate.parse(from);
         LocalDate toDate = LocalDate.parse(to);
