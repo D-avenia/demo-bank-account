@@ -12,15 +12,6 @@ public class ClientConfig {
     @Bean
     public WebClient webclient(ClientSettings settings) throws SSLException {
 
-        /*SslContext sslContext = SslContextBuilder
-                .forClient()
-                .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                .build();
-
-        HttpClient httpConnector = HttpClient
-                .create()
-                .secure(t -> t.sslContext(sslContext));*/
-
         return WebClient.builder()
                 .baseUrl(settings.getBaseUrlApi())
                 .defaultHeader("Auth-Schema", settings.getAuthSchema())

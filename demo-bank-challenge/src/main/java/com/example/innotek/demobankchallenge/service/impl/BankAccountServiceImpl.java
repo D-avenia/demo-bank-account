@@ -1,18 +1,15 @@
 package com.example.innotek.demobankchallenge.service.impl;
 
-import com.example.innotek.demobankchallenge.model.balance.Balance;
+import com.example.innotek.demobankchallenge.model.balance.ServerResponseBalance;
 import com.example.innotek.demobankchallenge.model.banktransfer.BankTransfer;
-import com.example.innotek.demobankchallenge.model.banktransfer.BankTransferResult;
-import com.example.innotek.demobankchallenge.model.transaction.Transaction;
-import com.example.innotek.demobankchallenge.model.transaction.TransactionPayload;
+import com.example.innotek.demobankchallenge.model.banktransfer.ServerResponseBankTransferResult;
+import com.example.innotek.demobankchallenge.model.transaction.ServerResponseTransactions;
 import com.example.innotek.demobankchallenge.service.BankAccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
@@ -24,35 +21,32 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public Mono<Balance> getBalance(int accountId) {
+    public Mono<ServerResponseBalance> getBalance(int accountId) {
 
         return webClient
                 .get()
                 .uri("accounts/{accountId}/balance", accountId)
                 .retrieve()
-                .bodyToMono(Balance.class);
+                .bodyToMono(ServerResponseBalance.class);
     }
 
     @Override
-    public Mono<BankTransferResult> moneyTransfers(int accountId, String timeZone, BankTransfer moneyTransfer) {
+    public Mono<ServerResponseBankTransferResult> moneyTransfers(int accountId, String timeZone, BankTransfer moneyTransfer) {
         return webClient
                 .get()
                 .uri("accounts/{accountId}/payments/money-transfers", accountId)
+                .header("X-Time-Zone", timeZone)
                 .retrieve()
-                .bodyToMono(BankTransferResult.class);
+                .bodyToMono(ServerResponseBankTransferResult.class);
     }
 
     @Override
-    public Flux<TransactionPayload> getTransactions(int accountId, LocalDate from, LocalDate to) {
+    public Mono<ServerResponseTransactions> getTransactions(int accountId, LocalDate from, LocalDate to) {
         return webClient
                 .get()
                 .uri("accounts/{accountId}/transactions", accountId)
                 .retrieve()
-                .bodyToFlux(TransactionPayload.class);
+                .bodyToMono(ServerResponseTransactions.class);
     }
 
-    @Override
-    public void persistTransactions(int accountId, List<Transaction> list) {
-        //Qua serve la repository
-    }
 }

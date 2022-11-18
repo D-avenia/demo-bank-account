@@ -22,31 +22,15 @@ public class ClientSettings {
         return baseUrlApi;
     }
 
-    public void setBaseUrlApi(String baseUrlApi) {
-        this.baseUrlApi = baseUrlApi;
-    }
-
     public String getAuthSchema() {
         return authSchema;
-    }
-
-    public void setAuthSchema(String authSchema) {
-        this.authSchema = authSchema;
     }
 
     public String getApiKey() {
         return apiKey;
     }
 
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
     public String getIdChiave() {
         return IdChiave;
-    }
-
-    public void setIdChiave(String idChiave) {
-        IdChiave = idChiave;
     }
 }
