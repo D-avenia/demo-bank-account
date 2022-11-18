@@ -1,5 +1,10 @@
 package com.example.innotek.demobankchallenge.model.server;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ServerErrorResponse {
 	private String code;
 	private String description;
@@ -23,39 +28,6 @@ public class ServerErrorResponse {
 		this.code = code;
 		this.description = description;
 		this.params = params;
-		this.details = details;
-	}
-
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getParams() {
-		return params;
-	}
-
-	public void setParams(String params) {
-		this.params = params;
-	}
-
-	public String getDetails() {
-		return details;
-	}
-
-	public void setDetails(String details) {
 		this.details = details;
 	}
 

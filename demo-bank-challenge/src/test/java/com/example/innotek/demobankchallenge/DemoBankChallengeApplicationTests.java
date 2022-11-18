@@ -84,8 +84,8 @@ class DemoBankChallengeApplicationTests {
         LocalDate from = LocalDate.parse("2022-09-11",df);
         LocalDate to = LocalDate.parse("2022-09-11",df);
 
-        Mockito.when(service.getBalance(12345)).thenReturn(getExpectedBalance());
-        Mockito.when(service.getTransactions(12345, from, to)).thenReturn(getExpectedTransactions());
+        Mockito.when(service.getBalance(12345)).thenReturn(getExpectedBalance().block());
+        Mockito.when(service.getTransactions(12345, from, to)).thenReturn(getExpectedTransactions().block());
     }
 
     @Test

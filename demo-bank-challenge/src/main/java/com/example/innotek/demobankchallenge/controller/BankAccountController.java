@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 
@@ -38,12 +37,9 @@ public class BankAccountController {
                     )
     })
     public ResponseEntity<ServerResponseBalance> getBalance(@PathVariable final int accountId) {
-        Mono<ServerResponseBalance> responseMono = service.getBalance(accountId);
-        ServerResponseBalance response = responseMono.block();
-
         return ResponseEntity
                 .ok()
-                .body(response);
+                .body(service.getBalance(accountId));
     }
 
     @GetMapping("/transactions")
@@ -62,13 +58,9 @@ public class BankAccountController {
     ) {
         LocalDate fromDate = LocalDate.parse(from);
         LocalDate toDate = LocalDate.parse(to);
-
-        Mono<ServerResponseTransactions> resultService = service.getTransactions(accountId, fromDate, toDate);
-        ServerResponseTransactions response = resultService.block();
-
         return ResponseEntity
                 .ok()
-                .body(response);
+                .body(service.getTransactions(accountId, fromDate, toDate));
     }
 
     @PostMapping(value = "/payments/money-transfers", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -87,12 +79,9 @@ public class BankAccountController {
             @Parameter(description = "The data to make a money transfer", required = true, schema = @Schema(implementation = BankTransfer.class))
             @RequestBody BankTransfer moneyTransfer
     ) {
-        Mono<ServerResponseBankTransferResult> resultService = service.moneyTransfers(accountId, timeZone, moneyTransfer);
-        ServerResponseBankTransferResult response = resultService.block();
-
         return ResponseEntity
                 .ok()
-                .body(response);
+                .body(service.moneyTransfers(accountId, timeZone, moneyTransfer));
 
     }
 }
