@@ -2,6 +2,7 @@ package com.example.innotek.demobankchallenge;
 
 import com.example.innotek.demobankchallenge.controller.BankAccountController;
 import com.example.innotek.demobankchallenge.service.BankAccountService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -26,10 +27,12 @@ class DemoBankChallengeApplicationTests {
     @Autowired
     private BankAccountService service;
 
+    @DisplayName("Context Loads")
     @Test
     void contextLoads() {
         assertThat(controller).isNotNull();
         assertThat(service).isNotNull();
     }
 
+    
 }
