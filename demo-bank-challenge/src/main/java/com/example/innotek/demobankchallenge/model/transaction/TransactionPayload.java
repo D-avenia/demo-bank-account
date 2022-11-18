@@ -2,7 +2,7 @@ package com.example.innotek.demobankchallenge.model.transaction;
 
 import java.util.List;
 
-public class  TransactionPayload{
+public class TransactionPayload{
 	private List<Transaction> list ;
 
 	public List<Transaction> getList() {

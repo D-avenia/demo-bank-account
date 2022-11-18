@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class  Transaction{
+public class Transaction{
 	
 		private String transactionId;
 		private String operationId;
