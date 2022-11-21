@@ -4,10 +4,9 @@ import com.example.innotek.demobankchallenge.exception.BankAccountException;
 import com.example.innotek.demobankchallenge.model.balance.ServerResponseBalance;
 import com.example.innotek.demobankchallenge.model.banktransfer.BankTransfer;
 import com.example.innotek.demobankchallenge.model.banktransfer.ServerResponseBankTransferResult;
-import com.example.innotek.demobankchallenge.model.server.ServerResponse;
+import com.example.innotek.demobankchallenge.model.server.ServerErrorResponse;
 import com.example.innotek.demobankchallenge.model.transaction.ServerResponseTransactions;
 import com.example.innotek.demobankchallenge.service.BankAccountService;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,10 +17,11 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 @Service
-@Slf4j
 public class BankAccountServiceImpl implements BankAccountService {
 
     private final static Logger logger = LoggerFactory.getLogger(BankAccountServiceImpl.class);
@@ -39,20 +39,24 @@ public class BankAccountServiceImpl implements BankAccountService {
                 .get()
                 .uri("accounts/{accountId}/balance", accountId)
                 .retrieve()
-                .bodyToMono(ServerResponseBalance.class);
-
-        return responseChecker(response, "getBalance");
+                .bodyToMono(ServerResponseBalance.class)
+                .onErrorResume((e -> Mono.error(onError("API000","getBalance","Bilancio non visualizzabile"))));
+        return response.block();
     }
 
     @Override
     public ServerResponseBankTransferResult moneyTransfers(int accountId, String timeZone, BankTransfer moneyTransfer) {
         logger.debug("Start - moneyTransfers in Service");
-        Mono<ServerResponseBankTransferResult> response = webClient.post()
+        Mono<ServerResponseBankTransferResult> response = webClient
+                .post()
                 .uri("accounts/{accountId}/payments/money-transfers", accountId)
                 .header("X-Time-Zone", timeZone)
                 .retrieve()
-                .bodyToMono(ServerResponseBankTransferResult.class);
-        return responseChecker(response, "moneyTransfers");
+                .bodyToMono(ServerResponseBankTransferResult.class)
+                .onErrorResume((e -> Mono.error(onError("API000",
+                        "moneyTransfers",
+                        "IbanBeneficiario è obbligatorio"))));
+        return response.block();
     }
 
     @Override
@@ -73,20 +77,23 @@ public class BankAccountServiceImpl implements BankAccountService {
                 .get()
                 .uri(uriFunction)
                 .retrieve()
-                .bodyToMono(ServerResponseTransactions.class);
-        return responseChecker(response, "getTransactions");
+                .bodyToMono(ServerResponseTransactions.class)
+                .onErrorResume((e -> Mono.error(onError("API000","getTransactions","Transazioni non visualizzabili"))));
+        return response.block();
     }
 
-    private <T extends ServerResponse<?>> T responseChecker(Mono<T> toCheck, String operation){
-        T response = toCheck.block();
+    private BankAccountException onError(String code,
+                                         String operation,
+                                         String description){
+        String message = "Error on " + operation;
+        List<ServerErrorResponse> errors = new ArrayList<>();
+        errors.add(new ServerErrorResponse(code, description));
 
-        if(response.getStatus().equals("KO")){
-            BankAccountException exception = new BankAccountException("STATUS IS KO");
-            exception.getErrors().addAll(response.getErrors());
-            logger.error("Error in " + operation + " in Service");
-            throw exception;
-        }
-        logger.debug("End - " + operation + " in Service");
-        return response;
+        BankAccountException exceptionToReturn = new BankAccountException(message,null,false,false);
+        exceptionToReturn.getErrors().addAll(errors);
+
+        logger.error(message);
+
+        throw exceptionToReturn;
     }
 }
