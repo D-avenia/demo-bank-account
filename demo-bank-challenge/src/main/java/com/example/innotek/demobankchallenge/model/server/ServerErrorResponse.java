@@ -31,4 +31,9 @@ public class ServerErrorResponse {
 		this.details = details;
 	}
 
+	@Override
+	public String toString(){
+		return "Code " + code +" - "+ "Description " + description +" - "+ "params " + params +" - "+ "details " + details;
+	}
+
 }

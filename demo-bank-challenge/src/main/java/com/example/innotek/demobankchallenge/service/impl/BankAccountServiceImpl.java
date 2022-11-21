@@ -7,6 +7,7 @@ import com.example.innotek.demobankchallenge.model.banktransfer.ServerResponseBa
 import com.example.innotek.demobankchallenge.model.server.ServerErrorResponse;
 import com.example.innotek.demobankchallenge.model.transaction.ServerResponseTransactions;
 import com.example.innotek.demobankchallenge.service.BankAccountService;
+import nonapi.io.github.classgraph.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,10 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
@@ -85,12 +88,12 @@ public class BankAccountServiceImpl implements BankAccountService {
     private BankAccountException onError(String code,
                                          String operation,
                                          String description){
-        String message = "Error on " + operation;
+
         List<ServerErrorResponse> errors = new ArrayList<>();
         errors.add(new ServerErrorResponse(code, description));
 
+        String message = "Error on " + operation + " " + errors;
         BankAccountException exceptionToReturn = new BankAccountException(message,null,false,false);
-        exceptionToReturn.getErrors().addAll(errors);
 
         logger.error(message);
 
